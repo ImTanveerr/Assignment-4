@@ -27,7 +27,9 @@ function Home() {
   const handleDeleteBook = async (bookId: string) => {
     try {
       const res = await deleteBook(bookId).unwrap();
-      notify(res?.success ? "Book deleted successfully" : "Failed to delete book");
+      notify(res?.data?.success ? "Failed to delete book" : "Book deleted successfully");
+
+
     } catch (error) {
       notify("Unexpected error occurred while deleting.");
       console.error("Delete error:", error);

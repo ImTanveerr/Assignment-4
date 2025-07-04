@@ -13,3 +13,9 @@ export interface IBook extends IBookInput {
   _id: string;
   available?: boolean;
 }
+
+export interface UpdateBookModalProps {
+  updatedBook: IBookInput & { _id?: string } | null;
+  isOpen: boolean;
+  onClose: () => void;
+}

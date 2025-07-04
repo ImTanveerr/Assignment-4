@@ -15,14 +15,14 @@ import {
     FormField,
     FormItem,
     FormLabel,
-} from "./ui/form";
+} from "../components/ui/form";
 import { useCreateBorrowMutation } from "@/redux/api/baseApi";
 import { ToastContainer, toast } from "react-toastify";
-import type { BorrowBookModalProps } from "@/interfaces/BorrowBookModalProps.interface";
+import type { BorrowBookModalProps } from "@/interfaces/borrow.interface";
 import type { IBorrow } from "@/interfaces/borrow.interface";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "./ui/calendar";
+import { Calendar } from "../components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 // import { useEffect } from "react";

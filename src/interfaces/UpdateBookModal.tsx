@@ -15,8 +15,8 @@ import {
     FormField,
     FormItem,
     FormLabel,
-} from "./ui/form";
-import { Textarea } from "./ui/textarea";
+} from "../components/ui/form";
+import { Textarea } from "../components/ui/textarea";
 import {
     Select,
     SelectContent,
@@ -24,10 +24,10 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "./ui/select";
+} from "../components/ui/select";
 import { useEffect } from "react";
 import { useUpdateTaskMutation } from "@/redux/api/baseApi";
-import type { UpdateBookModalProps } from "@/interfaces/UpdateBookModalProps.interface";
+import type { UpdateBookModalProps } from "@/interfaces/book.interface";
 import type { IBookInput } from "@/interfaces/book.interface";
 import { ToastContainer, toast } from "react-toastify";
 

@@ -3,3 +3,9 @@ export interface IBorrow{
     quantity: number,
     dueDate: Date,
 }
+
+export interface BorrowBookModalProps{
+    borrowedBookId: string,
+    isOpen: boolean,
+    onClose: () => void
+}

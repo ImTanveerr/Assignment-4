@@ -33,3 +33,9 @@ This is the **frontend** for the [Minimal Library Management System](#), built u
 
 ---
 
+## 🌐 CORS Configuration
+
+The backend is configured to allow cross-origin requests from the following origins:
+
+```js
+origin: ['http://localhost:5174', 'https://frontend-three-neon-81.vercel.app']

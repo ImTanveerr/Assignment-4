@@ -53,9 +53,10 @@ function useFormField() {
     const formState = useFormState({ name: fieldContext.name });
     const fieldState = getFieldState(fieldContext.name, formState);
 
-    if (!fieldContext) {
-        throw new Error("useFormField must be used within <FormField>");
-    }
+   if (!fieldContext) {
+  throw new Error("useFormField must be used inside a <FormField> component.");
+}
+
 
     const { id } = itemContext;
 
@@ -140,7 +141,7 @@ function FormDescription({
         <p
             data-slot="form-description"
             id={formDescriptionId}
-            className={cn("text-muted-foreground text-sm", className)}
+            className={cn("mt-1 text-sm text-gray-500", className)}
             {...props}
         />
     );
@@ -160,7 +161,7 @@ function FormMessage({
         <p
             data-slot="form-message"
             id={formMessageId}
-            className={cn("text-red-600 text-sm flex items-center gap-1", className)}
+            className={cn("mt-1 flex items-start text-sm text-destructive", className)}
             {...props}
         >
       <span role="img" aria-label="error">

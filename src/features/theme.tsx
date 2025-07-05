@@ -1,47 +1,30 @@
-import { createContext, useContext } from "react"
+import { createContext, useContext, useEffect } from "react"
 
-type ThemeProviderProps = {
-  children: React.ReactNode
-}
+type ThemeContextType = "light"
 
-type ThemeProviderState = {
-  theme: "light"
-  setTheme: (theme: "light") => void
-}
+const ThemeContext = createContext<ThemeContextType>("light")
 
-const initialState: ThemeProviderState = {
-  theme: "light",
-  setTheme: () => null,
-}
-
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
-
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  // Fixed light theme, no toggling
-  const value = {
-    theme: "light" as const,
-    setTheme: () => null, // No-op since theme is fixed
-  }
-
-  // Ensure document has "light" class only
-  if (typeof window !== "undefined") {
-    const root = window.document.documentElement
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    // Ensure document has only light theme class
+    const root = document.documentElement
     root.classList.remove("dark")
     root.classList.add("light")
-  }
+  }, [])
 
   return (
-      <ThemeProviderContext.Provider value={value}>
-        {children}
-      </ThemeProviderContext.Provider>
+    <ThemeContext.Provider value="light">
+      {children}
+    </ThemeContext.Provider>
   )
 }
 
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext)
+export function useTheme() {
+  const theme = useContext(ThemeContext)
 
-  if (context === undefined)
+  if (!theme) {
     throw new Error("useTheme must be used within a ThemeProvider")
+  }
 
-  return context
+  return theme
 }

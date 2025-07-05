@@ -5,8 +5,8 @@ import {
   useDeleteBookMutation,
   useGetAllBooksQuery,
 } from "@/redux/api/baseApi";
-import BorrowBookModal from "@/interfaces/BorrowBookModal";
-import UpdateBookModal from "@/interfaces/UpdateBookModal";
+import BorrowBook from "@/interfaces/BorrowBook.tsx";
+import UpdateBook from "@/interfaces/UpdateBook.tsx";
 import type { IBook, IBookInput } from "@/interfaces/book.interface";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -65,12 +65,12 @@ function Home() {
   return (
     <>
       <ToastContainer />
-      <UpdateBookModal
+      <UpdateBook
         isOpen={updateModalOpen}
         onClose={() => setUpdateModalOpen(false)}
         updatedBook={updatedBook}
       />
-      <BorrowBookModal
+      <BorrowBook
         isOpen={borrowModalOpen}
         onClose={() => setBorrowModalOpen(false)}
         borrowedBookId={borrowedBookId}

@@ -8,39 +8,49 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useForm, type FieldValues, type SubmitHandler } from "react-hook-form";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-} from "../components/ui/form";
+import { useForm } from "react-hook-form";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../components/ui/form";
 import { Textarea } from "../components/ui/textarea";
 import {
     Select,
     SelectContent,
     SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "../components/ui/select";
 import { useEffect } from "react";
 import { useUpdateTaskMutation } from "@/redux/api/baseApi";
-import type { UpdateBookModalProps } from "@/interfaces/book.interface";
-import type { IBookInput } from "@/interfaces/book.interface";
 import { ToastContainer, toast } from "react-toastify";
+import type { UpdateBookModalProps } from "@/interfaces/book.interface";
 
-export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModalProps) {
-    const form = useForm<IBookInput>({
+type UpdateFormInputs = {
+    title: string;
+    author: string;
+    genre: string;
+    isbn: string;
+    description: string;
+    copies: number;
+};
+
+const UpdateBook = ({ updatedBook, isOpen, onClose }: UpdateBookModalProps) => {
+    const genres = ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"];
+    const [updateBook] = useUpdateTaskMutation();
+
+    const form = useForm<UpdateFormInputs>({
         mode: "onChange",
+        defaultValues: {
+            title: "",
+            author: "",
+            genre: "",
+            isbn: "",
+            description: "",
+            copies: 1,
+        },
     });
 
     const notify = (message: string) => toast(message);
-
-    const genras = ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"];
-
-    const [updateBook] = useUpdateTaskMutation();
 
     useEffect(() => {
         if (isOpen && updatedBook) {
@@ -48,41 +58,38 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
         }
     }, [isOpen, updatedBook, form]);
 
-    const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const parsedData = {
-            ...data,
-            copies: Number(data.copies),
-        };
-
+    const submitHandler = async (data: UpdateFormInputs) => {
         try {
-            const res = await updateBook({
+            const parsedData = {
+                ...data,
                 bookId: updatedBook?._id,
-                ...parsedData, // ✅ send fields directly
-            }).unwrap();
-
+                copies: Number(data.copies),
+            };
+            const res = await updateBook(parsedData).unwrap();
             if (res?.success) {
-                notify("Book successfully updated");
+                notify("Book updated");
                 onClose();
                 form.reset();
             } else {
-                notify("Book update failed");
+                notify("Failed to update");
             }
         } catch (error) {
-            console.error("Update error:", error);
-            notify("An error occurred during update");
+            notify("Error occurred");
         }
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <ToastContainer />
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[550px] border border-gray-200 shadow rounded-lg">
                 <DialogHeader>
-                    <DialogTitle className="text-center">Update Book</DialogTitle>
+                    <DialogTitle className="text-center text-xl font-bold text-indigo-600">
+                        Update Book Details
+                    </DialogTitle>
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(submitHandler)} className="space-y-6">
                         {/* Title */}
                         <FormField
                             control={form.control}
@@ -92,7 +99,11 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
                                 <FormItem>
                                     <FormLabel>Title</FormLabel>
                                     <FormControl>
-                                        <Input {...field} value={field.value || ""} placeholder="Book Title" />
+                                        <Input
+                                            {...field}
+                                            placeholder="Enter Book Title"
+                                            className="placeholder-gray-400"
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -107,7 +118,11 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
                                 <FormItem>
                                     <FormLabel>Author</FormLabel>
                                     <FormControl>
-                                        <Input {...field} value={field.value || ""} placeholder="Book Author" />
+                                        <Input
+                                            {...field}
+                                            placeholder="Enter Author Name"
+                                            className="placeholder-gray-400"
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -123,14 +138,15 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
                                     <FormLabel>Genre</FormLabel>
                                     <FormControl>
                                         <Select value={field.value} onValueChange={field.onChange}>
-                                            <SelectTrigger className="w-full">
+                                            <SelectTrigger className="w-full placeholder-gray-400">
                                                 <SelectValue placeholder="Select Genre" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectGroup>
-                                                    {genras.map((genra, index) => (
-                                                        <SelectItem key={index} value={genra}>
-                                                            {genra}
+                                                    <SelectLabel>Available Genres</SelectLabel>
+                                                    {genres.map((genre, idx) => (
+                                                        <SelectItem key={idx} value={genre}>
+                                                            {genre}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectGroup>
@@ -150,7 +166,11 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
                                 <FormItem>
                                     <FormLabel>ISBN</FormLabel>
                                     <FormControl>
-                                        <Input {...field} value={field.value || ""} placeholder="Book ISBN" />
+                                        <Input
+                                            {...field}
+                                            placeholder="Enter ISBN Number"
+                                            className="placeholder-gray-400"
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -160,12 +180,15 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
                         <FormField
                             control={form.control}
                             name="description"
-                            rules={{ required: "Description is required" }}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
-                                        <Textarea {...field} value={field.value || ""} placeholder="Book Description" />
+                                        <Textarea
+                                            {...field}
+                                            placeholder="Enter Book Description"
+                                            className="placeholder-gray-400"
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
@@ -176,31 +199,41 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
                             control={form.control}
                             name="copies"
                             rules={{
-                                required: "Copies are required",
-                                min: {
-                                    value: 0,
-                                    message: "Copies cannot be less than 0",
-                                },
+                                required: "Copies is required",
+                                min: { value: 1, message: "At least 1 copy required" },
                             }}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Copies</FormLabel>
                                     <FormControl>
-                                        <Input type="number" {...field} value={field.value || ""} placeholder="Number of Copies" />
+                                        <Input
+                                            {...field}
+                                            type="number"
+                                            placeholder="Enter Number of Copies"
+                                            className="placeholder-gray-400"
+                                        />
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
 
-                        {/* Footer */}
-                        <DialogFooter className="mt-5">
+                        {/* Footer Buttons */}
+                        <DialogFooter className="flex justify-end space-x-4">
                             <DialogClose asChild>
-                                <Button type="button" variant="outline" onClick={onClose}>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className="rounded-md bg-gray-300 hover:bg-gray-400"
+                                >
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button type="submit" disabled={!form.formState.isValid}>
-                                Update Book
+                            <Button
+                                type="submit"
+                                disabled={!form.formState.isValid}
+                                className="rounded-md bg-indigo-600 hover:bg-indigo-700 text-white"
+                            >
+                                Save Changes
                             </Button>
                         </DialogFooter>
                     </form>
@@ -208,6 +241,6 @@ export function UpdateBookModal({ updatedBook, isOpen, onClose }: UpdateBookModa
             </DialogContent>
         </Dialog>
     );
-}
+};
 
-export default UpdateBookModal;
+export default UpdateBook;
